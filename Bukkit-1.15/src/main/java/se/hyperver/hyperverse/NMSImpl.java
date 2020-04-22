@@ -176,7 +176,6 @@ public class NMSImpl implements NMS {
                 // Persist the player's gamemode if they have the override permission.
                 if (player.hasPermission("hyperverse.gamemode.override")) {
                     final int value = compound.getInt("GameType");
-                    System.out.println(value);
                     final GameMode gameMode;
                     switch (value) {
                         case 0:
