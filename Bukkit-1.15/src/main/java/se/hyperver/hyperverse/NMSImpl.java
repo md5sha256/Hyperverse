@@ -19,6 +19,7 @@ package se.hyperver.hyperverse;
 
 import co.aikar.taskchain.TaskChainFactory;
 import com.google.inject.Inject;
+import org.bukkit.GameMode;
 import se.hyperver.hyperverse.configuration.HyperConfiguration;
 import se.hyperver.hyperverse.util.NMS;
 import io.papermc.lib.PaperLib;
@@ -132,7 +133,6 @@ public class NMSImpl implements NMS {
         final NBTTagCompound playerTag = new NBTTagCompound();
         final EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
         entityPlayer.save(playerTag);
-
         if (!playerTag.hasKey("hyperverse")) {
             playerTag.set("hyperverse", new NBTTagCompound());
         }
@@ -173,6 +173,25 @@ public class NMSImpl implements NMS {
                 ((CraftPlayer) player).setExtraData(compound);
                 // Set the position to the player's current position
                 compound.set("Pos", doubleList(entityPlayer.locX(), entityPlayer.locY(), entityPlayer.locZ()));
+                // Persist the player's gamemode if they have the override permission.
+                if (player.hasPermission("hyperverse.gamemode.override")) {
+                    final int value = compound.getInt("GameType");
+                    System.out.println(value);
+                    final GameMode gameMode;
+                    switch (value) {
+                        case 0:
+                            gameMode = GameMode.SURVIVAL; break;
+                        case 1:
+                            gameMode = GameMode.CREATIVE; break;
+                        case 2:
+                            gameMode = GameMode.ADVENTURE; break;
+                        case 3:
+                            gameMode = GameMode.SPECTATOR; break;
+                        default:
+                            throw new IllegalStateException("Unknown gamemode ID");
+                    }
+                    player.setGameMode(gameMode);
+                }
                 // Set the world to the player's current world
                 compound.setString("world", player.getWorld().getName());
                 // Store persistent values

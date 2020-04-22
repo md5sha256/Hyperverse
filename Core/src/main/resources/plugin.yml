@@ -45,6 +45,9 @@ permissions:
   hyperverse.gamerule.set:
     description: Allow players to world gamerules
     default: op
+  hyperverse.gamemode.override:
+    description: Allow players to override the default gamemode of a world.
+    default: op
   hyperverse.delete:
     description: Allow players to delete worlds
     default: op
