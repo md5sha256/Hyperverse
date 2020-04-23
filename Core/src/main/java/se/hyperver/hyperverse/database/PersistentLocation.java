@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
-@DatabaseTable(tableName = "location")
+@DatabaseTable(tableName = "player_locations")
 public final class PersistentLocation {
 
     @DatabaseField(generatedId = true)
@@ -35,29 +35,53 @@ public final class PersistentLocation {
     private String uuid;
     @DatabaseField(uniqueCombo = true)
     private String world;
+    @DatabaseField(uniqueCombo = true)
+    private int locationType;
     @DatabaseField
     private double x;
     @DatabaseField
     private double y;
     @DatabaseField
     private double z;
+    @DatabaseField
+    private float yaw;
+    @DatabaseField
+    private float pitch;
 
     public PersistentLocation() {
     }
 
     public PersistentLocation(@NotNull final String uuid, @NotNull final String world,
-        final double x, final double y, final double z) {
+        @NotNull LocationType locationType, final double x, final double y, final double z,
+        final float yaw, final float pitch) {
         this.uuid = Objects.requireNonNull(uuid);
         this.world = Objects.requireNonNull(world);
         this.x = x;
         this.y = y;
         this.z = z;
+        this.yaw = yaw;
+        this.pitch = pitch;
+        this.locationType = locationType.ordinal();
     }
 
     public static PersistentLocation fromLocation(@NotNull final UUID owner,
         @NotNull final Location location) {
-        return new PersistentLocation(owner.toString(), Objects.requireNonNull(location.getWorld()).getName(),
-            location.getX(), location.getY(), location.getZ());
+        return fromLocation(owner, location, LocationType.PLAYER);
+    }
+
+    public static PersistentLocation fromLocation(@NotNull final UUID owner,
+        @NotNull final Location location, @NotNull final LocationType locationType) {
+        return new PersistentLocation(owner.toString(),
+            Objects.requireNonNull(location.getWorld()).getName(), locationType, location.getX(),
+            location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+    }
+
+    public void setLocationType(LocationType locationType) {
+        this.locationType = locationType.ordinal();
+    }
+
+    public LocationType getLocationType() {
+        return LocationType.values()[locationType];
     }
 
     @NotNull public String getUuid() {
@@ -80,6 +104,14 @@ public final class PersistentLocation {
         return this.z;
     }
 
+    public float getPitch() {
+        return pitch;
+    }
+
+    public float getYaw() {
+        return yaw;
+    }
+
     public void setId(final int id) {
         this.id = id;
     }
@@ -89,7 +121,20 @@ public final class PersistentLocation {
     }
 
     @NotNull public Location toLocation() {
-        return new Location(Bukkit.getWorld(world), x, y, z);
+        return new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
+    }
+
+    public enum LocationType {
+
+        /**
+         * Represents a normal location of a player, such as the current location.
+         */
+        PLAYER,
+        /**
+         * Represents the respawn location of a player.
+         */
+        RESPAWN
+
     }
 
 }
