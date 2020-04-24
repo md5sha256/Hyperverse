@@ -17,18 +17,13 @@
 
 package se.hyperver.hyperverse.listeners;
 
+import org.bukkit.event.EventPriority;
 import se.hyperver.hyperverse.Hyperverse;
 import se.hyperver.hyperverse.configuration.HyperConfiguration;
 import se.hyperver.hyperverse.configuration.Messages;
 import se.hyperver.hyperverse.database.HyperDatabase;
 import se.hyperver.hyperverse.database.PersistentLocation;
-import se.hyperver.hyperverse.flags.implementation.EndFlag;
-import se.hyperver.hyperverse.flags.implementation.GamemodeFlag;
-import se.hyperver.hyperverse.flags.implementation.LocalRespawnFlag;
-import se.hyperver.hyperverse.flags.implementation.NetherFlag;
-import se.hyperver.hyperverse.flags.implementation.ProfileGroupFlag;
-import se.hyperver.hyperverse.flags.implementation.PveFlag;
-import se.hyperver.hyperverse.flags.implementation.PvpFlag;
+import se.hyperver.hyperverse.flags.implementation.*;
 import se.hyperver.hyperverse.util.MessageUtil;
 import se.hyperver.hyperverse.util.NMS;
 import se.hyperver.hyperverse.world.HyperWorld;
@@ -98,8 +93,18 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onTeleport(final PlayerTeleportEvent event) {
+        event.getFrom();
+        final HyperWorld hyperWorld = this.worldManager.getWorld(
+            Objects.requireNonNull(event.getFrom().getWorld()));
+        if (hyperWorld != null) { //Check for player limit flag here
+            final int limit = hyperWorld.getFlag(PlayerLimitFlag.class);
+            if (event.getFrom().getWorld().getPlayers().size() >= limit) {
+                event.setCancelled(true);
+                MessageUtil.sendMessage(event.getPlayer(), Messages.messageWorldFull);
+            }
+        }
         if (hyperConfiguration.shouldPersistLocations()) {
             final Location from = event.getFrom();
             final Location to = event.getTo();
@@ -115,7 +120,6 @@ public class PlayerListener implements Listener {
             this.hyperDatabase.storeLocation(PersistentLocation.fromLocation(uuid, to), true, false);
 
             if (hyperConfiguration.shouldGroupProfiles()) {
-                final HyperWorld hyperWorld = this.worldManager.getWorld(from.getWorld());
                 if (hyperWorld != null) {
                     final Path oldWorldDirectory =
                         hyperverse.getDataFolder().toPath().resolve("profiles").resolve(hyperWorld.getFlag(ProfileGroupFlag.class));
