@@ -42,6 +42,7 @@ import se.hyperver.hyperverse.exception.HyperWorldValidationException;
 import se.hyperver.hyperverse.flags.FlagParseException;
 import se.hyperver.hyperverse.flags.GlobalWorldFlagContainer;
 import se.hyperver.hyperverse.flags.WorldFlag;
+import se.hyperver.hyperverse.flags.implementation.PlayerLimitFlag;
 import se.hyperver.hyperverse.modules.HyperWorldFactory;
 import se.hyperver.hyperverse.util.IncendoPaster;
 import se.hyperver.hyperverse.util.MessageUtil;
@@ -257,7 +258,7 @@ public class HyperCommandManager extends BaseCommand {
             MessageUtil.sendMessage(sender, Messages.messageWorldCreationFinished);
             if (sender instanceof Player) {
                 // Attempt to teleport them to the world
-                hyperWorld.teleportPlayer((Player) sender);
+                doTeleport((Player) sender, hyperWorld);
             }
         } catch (final HyperWorldValidationException validationException) {
             switch (validationException.getValidationResult()) {
@@ -364,6 +365,12 @@ public class HyperCommandManager extends BaseCommand {
         }
         if (world.getBukkitWorld() == player.getWorld()) {
             MessageUtil.sendMessage(player, Messages.messageAlreadyInWorld);
+            return;
+        }
+        int limit = world.getFlag(PlayerLimitFlag.class);
+        assert world.getBukkitWorld() != null;
+        if (limit >= world.getBukkitWorld().getPlayers().size()) {
+            MessageUtil.sendMessage(player, Messages.messageWorldFull);
             return;
         }
         MessageUtil.sendMessage(player, Messages.messageTeleporting, "%world%",

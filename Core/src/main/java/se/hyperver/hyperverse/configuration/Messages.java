@@ -127,6 +127,8 @@ public class Messages {
         "&cThe world could not be removed. Reason: %reason%");
     public static final Message messageWorldRemoved = createMessage("world.removed",
         "&7The world was removed successfully");
+    public static final Message messageWorldFull = createMessage("world.full",
+        "&cThe world is full - the player limit has been reached!");
     public static final Message messageNotPermittedEntry = createMessage("world.not_permitted",
         "&cYou are not allowed to enter that world");
     public static final Message messageTeleportNotSafe = createMessage("world.not_safe",
@@ -160,6 +162,8 @@ public class Messages {
         "Name of the profile group that the world belongs to");
     public static final Message flagDescriptionDifficulty = createMessage("flags.difficulty",
         "World difficulty. Available values are: peaceful, easy, normal and hard");
+    public static final Message flagDescriptionPlayerLimit = createMessage("flags.player-limit",
+        "Player limits. Any non-negative integer value, 0 for no limit");
 
     public static final DecimalFormat miscCoordinateDecimalFormat = new DecimalFormat("#.##");
 
