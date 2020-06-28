@@ -144,12 +144,14 @@ public class Messages {
         "&7The paste file has been uploaded to: %paste%");
     public static final Message messagePasteFailed = createMessage("paste.failed",
         "&cFailed to create the debug paste. Reason: %reason%");
+    public static final Message messageInvalidProfileGroup =
+        createMessage("invalid.profile_group", "&cThat is not a valid profile group");
+    public static final Message messageInvalidGameRule = createMessage("invalid.game_rule",
+        "&cThat is not a valid game rule");
     public static final Message messageInvalidWorldType = createMessage("invalid.world_type",
         "&cThat is not a valid world type");
     public static final Message messageInvalidWorldFeatures = createMessage("invalid.world_feature",
         "&cThat is not a valid feature type");
-    public static final Message messageInvalidGameRule = createMessage("invalid.game_rule",
-        "&cThat is not a valid game rule");
     public static final Message messageInvalidStructureSetting = createMessage("invalid.structure_setting",
         "&cThat is not a valid world structure setting");
     public static final Message messagePortalNotLinked = createMessage("portal.not_linked",
@@ -223,6 +225,8 @@ public class Messages {
         "Import a world into Hyperverse");
     public static final Message commandDescriptionTeleport = createMessage("command.teleport",
         "Teleport between hyperverse worlds");
+    public static final Message commandDescriptionTeleportGroup = createMessage(
+        "command.teleportgroup", "Teleport to the last saved location in a specified profile-group");
     public static final Message commandDescriptionUnload = createMessage("command.unload",
         "Unload a world");
     public static final Message commandDescriptionLoad = createMessage("command.load",
